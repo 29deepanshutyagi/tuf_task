@@ -5,7 +5,8 @@
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "types": ["node"], // Ensure this is included
+    "types": ["node"], // Ensure this is included,
+     "typeRoots": [ "./node_modules/@types", "../node_modules/@types", "../../node_modules/@types" ],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist"
