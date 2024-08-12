@@ -5,8 +5,7 @@
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "types": ["node"], // Include type definitions for Node.js
-    "typeRoots": ["./node_modules/@types"], // Include type definition files
+    "types": ["node"],
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist"

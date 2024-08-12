@@ -4,15 +4,28 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
 
+// Popup component
+const Popup: React.FC<{ message: string; onClose: () => void }> = ({ message, onClose }) => {
+  return (
+    <div className="popup-overlay">
+      <div className="popup">
+        <p>{message}</p>
+        <button onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+};
+
 const Dashboard: React.FC = () => {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
   const [flashcards, setFlashcards] = useState<{ id: number; question: string; answer: string; isEditing?: boolean }[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [popupMessage, setPopupMessage] = useState<string | null>(null);
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/flashcards');
+      const response = await axios.get('https://tuf-task-43ao.onrender.com/flashcards');
       setFlashcards(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
@@ -24,8 +37,16 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleAdd = async () => {
+    console.log('Question:', question);
+    console.log('Answer:', answer);
+    if (!question.trim() || !answer.trim()) {
+      console.log('Setting popup message');
+      setPopupMessage('Please fill out both the question and answer fields.');
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:5000/flashcards', { question, answer });
+      await axios.post('https://tuf-task-43ao.onrender.com/flashcards', { question, answer });
       setQuestion('');
       setAnswer('');
       fetchFlashcards();
@@ -36,7 +57,7 @@ const Dashboard: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:5000/flashcards/${id}`);
+      await axios.delete(`https://tuf-task-43ao.onrender.com/flashcards/${id}`);
       fetchFlashcards();
     } catch (error) {
       console.error('Error deleting flashcard:', error);
@@ -59,7 +80,7 @@ const Dashboard: React.FC = () => {
     const flashcard = flashcards.find(fc => fc.id === id);
     if (flashcard) {
       try {
-        await axios.put(`http://localhost:5000/flashcards/${id}`, { question: flashcard.question, answer: flashcard.answer });
+        await axios.put(`https://tuf-task-43ao.onrender.com/flashcards/${id}`, { question: flashcard.question, answer: flashcard.answer });
         toggleEditMode(id);
         fetchFlashcards();
       } catch (error) {
@@ -89,7 +110,12 @@ const Dashboard: React.FC = () => {
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
         />
-        <button onClick={handleAdd}>Add Flashcard</button>
+        <button
+          onClick={handleAdd}
+          disabled={!question.trim() || !answer.trim()}
+        >
+          Add Flashcard
+        </button>
       </div>
       <div className="flashcards-section">
         <div className="flashcards-header">
@@ -135,6 +161,11 @@ const Dashboard: React.FC = () => {
           )}
         </ul>
       </div>
+
+      {/* Render Popup if there is a message */}
+      {popupMessage && (
+        <Popup message={popupMessage} onClose={() => setPopupMessage(null)} />
+      )}
     </div>
   );
 };

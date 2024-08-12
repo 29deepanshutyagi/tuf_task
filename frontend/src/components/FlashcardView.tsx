@@ -13,7 +13,7 @@ const FlashcardsView: React.FC = () => {
 
   const fetchFlashcards = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/flashcards');
+      const response = await axios.get('https://tuf-task-43ao.onrender.com/flashcards');
       setFlashcards(response.data);
     } catch (error) {
       console.error('Error fetching flashcards:', error);
